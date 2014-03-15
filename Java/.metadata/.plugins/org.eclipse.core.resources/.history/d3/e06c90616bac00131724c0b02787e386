@@ -103,20 +103,14 @@ public class WyomingDownload {
 							   lineOriginal.substring(35,lineOriginal.length());
 						
 //						String checkWhiteSpaces = line.trim();
-						boolean shouldAllowLine = true; 
 						String[] checkLine = line.split(",");
 						for(String bitToCheck:checkLine){
 							if(bitToCheck.trim().length()>0){
-
-							}else{
-								shouldAllowLine = false;
+								ind.println(line);
 								break;
 							}
 						}
 						
-						if(shouldAllowLine){
-							ind.println(line);
-						}
 					}
 				}
 				in.close();

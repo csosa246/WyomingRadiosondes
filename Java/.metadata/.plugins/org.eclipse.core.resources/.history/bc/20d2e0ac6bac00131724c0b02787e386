@@ -115,8 +115,9 @@ public class WyomingDownload {
 						}
 						
 						if(shouldAllowLine){
-							ind.println(line);
+							
 						}
+						
 					}
 				}
 				in.close();

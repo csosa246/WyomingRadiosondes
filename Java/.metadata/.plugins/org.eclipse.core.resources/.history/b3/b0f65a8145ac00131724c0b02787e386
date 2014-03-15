@@ -32,7 +32,7 @@ public class WyomingDownload {
 
 	public static void main(String args[]) {
 		String[] stationNum = { "72694", "72451", "72469"};
-		String[] stations = { "72694SLESalem","72451DDCDodgeCity","72469DNRDenver"};
+		String[] stations = { "72694SLESalem","72451DDCDodgeCity(Awos)-","72469-DNR-Denver"};
 		
 		String[] years = {"2009"};
 		String[] months = { "01" };
@@ -94,6 +94,7 @@ public class WyomingDownload {
 						
 					} else {
 						//44 is the length of the substring 
+						
 						String lineOriginal = line.substring(0,44);
 						line = lineOriginal.substring(0,7) + "," + 
 							   lineOriginal.substring(7,14) + "," + 
@@ -102,21 +103,7 @@ public class WyomingDownload {
 							   lineOriginal.substring(28,35) + "," + 
 							   lineOriginal.substring(35,lineOriginal.length());
 						
-//						String checkWhiteSpaces = line.trim();
-						boolean shouldAllowLine = true; 
-						String[] checkLine = line.split(",");
-						for(String bitToCheck:checkLine){
-							if(bitToCheck.trim().length()>0){
-
-							}else{
-								shouldAllowLine = false;
-								break;
-							}
-						}
-						
-						if(shouldAllowLine){
-							ind.println(line);
-						}
+						ind.println(line);
 					}
 				}
 				in.close();
@@ -136,6 +123,7 @@ public class WyomingDownload {
 	}
 
 	public static String Day2julianDay(String DOM, String MON, String YEAR) {
+
 		int intDOM = Integer.parseInt(DOM);
 		int intMON = Integer.parseInt(MON) - 1; // -1 because months start at 0;
 		int intYEAR = Integer.parseInt(YEAR);

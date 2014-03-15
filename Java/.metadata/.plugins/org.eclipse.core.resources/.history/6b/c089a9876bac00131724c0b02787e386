@@ -107,16 +107,13 @@ public class WyomingDownload {
 						String[] checkLine = line.split(",");
 						for(String bitToCheck:checkLine){
 							if(bitToCheck.trim().length()>0){
-
+//								shouldNotAllowLine = true; 
+//								break;
 							}else{
-								shouldAllowLine = false;
-								break;
+								
 							}
 						}
 						
-						if(shouldAllowLine){
-							ind.println(line);
-						}
 					}
 				}
 				in.close();

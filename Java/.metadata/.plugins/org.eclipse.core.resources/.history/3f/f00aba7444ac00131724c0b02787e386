@@ -14,13 +14,14 @@ Selected Stations
 1. HGHT = 61m - 72694 SLE Salem Observations
 2. HGHT = 790m - 72451 DDC Dodge City(Awos) Observations at 00Z 15 Mar 2014
 3. HGHT = 1625m - 72469 DNR Denver Observations at 00Z 15 Mar 2014
+
  */
 
 public class WyomingDownload {
 	static PrintWriter ind;
 	static String directory = "/Users/craesosa/Dropbox/Northrop/WyomingRadiosondes/Java/WyomingSam/wyoming_downloads/";
 	static String linkPREFIX = "http://weather.uwyo.edu/cgi-bin/sounding?";
-	static String region = "region=naconf";
+	static String region = "region=europe";
 	static String typeText = "&TYPE=TEXT%3ALIST";
 	// varied
 	static String yr = "&YEAR=";
@@ -32,17 +33,22 @@ public class WyomingDownload {
 
 	public static void main(String args[]) {
 		String[] stationNum = { "72694", "72451", "72469"};
-		String[] stations = { "72694SLESalem","72451DDCDodgeCity","72469DNRDenver"};
+		String[] stations = { "10868Muenchen-OberschlssheimObservations",
+				"06260EHDBDeBiltObservations",
+				"16622LGTSThessaloniki(Airport)Observations",
+				"16245LIREPraticaDiMareObservations", "8190Observations" };
 		
 		String[] years = {"2009"};
 		String[] months = { "01" };
 		// Loop over the stations once you have em
 		for (int k = 0; k < stationNum.length; k++) {
+//			System.out.println(k);
 			for (int i = 0; i < years.length; i++) {
 				for (int j = 0; j < months.length; j++) {
 					// Assembling link
 					String linkGen = linkPREFIX + region + typeText + yr + years[i] + mon + months[j] + from + SN + stationNum[k];
 					System.out.println(linkGen);
+
 					wyomingSite(linkGen, years[i], months[j], stationNum[k], stations[k]);
 				}
 			}
@@ -93,7 +99,8 @@ public class WyomingDownload {
 					if (cL == true | line.contains("--") | line.isEmpty()) {
 						
 					} else {
-						//44 is the length of the substring 
+						//43 is the length of the substring 
+						
 						String lineOriginal = line.substring(0,44);
 						line = lineOriginal.substring(0,7) + "," + 
 							   lineOriginal.substring(7,14) + "," + 
@@ -102,21 +109,7 @@ public class WyomingDownload {
 							   lineOriginal.substring(28,35) + "," + 
 							   lineOriginal.substring(35,lineOriginal.length());
 						
-//						String checkWhiteSpaces = line.trim();
-						boolean shouldAllowLine = true; 
-						String[] checkLine = line.split(",");
-						for(String bitToCheck:checkLine){
-							if(bitToCheck.trim().length()>0){
-
-							}else{
-								shouldAllowLine = false;
-								break;
-							}
-						}
-						
-						if(shouldAllowLine){
-							ind.println(line);
-						}
+						ind.println(line);
 					}
 				}
 				in.close();
@@ -136,6 +129,7 @@ public class WyomingDownload {
 	}
 
 	public static String Day2julianDay(String DOM, String MON, String YEAR) {
+
 		int intDOM = Integer.parseInt(DOM);
 		int intMON = Integer.parseInt(MON) - 1; // -1 because months start at 0;
 		int intYEAR = Integer.parseInt(YEAR);
