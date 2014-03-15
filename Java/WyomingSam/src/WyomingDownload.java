@@ -29,8 +29,8 @@ public class WyomingDownload {
 				"16622LGTSThessaloniki(Airport)Observations",
 				"16245LIREPraticaDiMareObservations", "8190Observations" };
 		
-		String[] years = { "2009", "2010", "2011" };
-		String[] months = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" };
+		String[] years = {"2009"};
+		String[] months = { "01" };
 		// Loop over the stations once you have em
 		for (int k = 0; k < stationNum.length; k++) {
 //			System.out.println(k);
@@ -55,6 +55,7 @@ public class WyomingDownload {
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));
 			String line = "";
+			//We don't really use month mode
 			if (mode.equals("month")) {
 				ind = new PrintWriter(new FileWriter(directory + stationNum + "_" + years + months + ".txt"));
 				while ((line = in.readLine()) != null) {
@@ -87,7 +88,18 @@ public class WyomingDownload {
 
 					boolean cL = containsLetter(line);
 					if (cL == true | line.contains("--") | line.isEmpty()) {
+						
 					} else {
+						//43 is the length of the substring 
+						
+						String lineOriginal = line.substring(0,44);
+						line = lineOriginal.substring(0,7) + "," + 
+							   lineOriginal.substring(7,14) + "," + 
+							   lineOriginal.substring(14,21) + "," + 
+							   lineOriginal.substring(21,28) + "," +
+							   lineOriginal.substring(28,35) + "," + 
+							   lineOriginal.substring(35,lineOriginal.length());
+						
 						ind.println(line);
 					}
 				}
