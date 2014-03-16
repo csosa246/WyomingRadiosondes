@@ -1,0 +1,7 @@
+clear
+clc
+cd('sondes');
+
+files = dir;
+
+for 3:

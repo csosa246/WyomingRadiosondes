@@ -73,18 +73,32 @@ public class WyomingDownload {
 				ind.close();
 			} else if (mode.equals("12hr")) {
 				while ((line = in.readLine()) != null) {
-					if (line.replaceAll(" ", "").contains(stations)) {
+					if (line.replaceAll("\\s+", "").contains(stations)) {
 						String timestamp = line;
-						String[] timestamp_arr = timestamp.split(" ");
-						int ts_len = timestamp_arr.length;
-						int time_index = ts_len - 4;
-						int day_index = ts_len - 3;
+//						System.out.println(timestamp);
+//						String[] timestamp_arr = timestamp.split(" ");
+//						int ts_len = timestamp_arr.length;
+//						int time_index = ts_len - 4;
+//						int day_index = ts_len - 3;
+//
+//						String time = timestamp_arr[time_index];
+//						String day = timestamp_arr[day_index];
+//
+//						String jd = Day2julianDay(day, months, years);
+//						ind = new PrintWriter(new FileWriter(directory + stations + "." + years + jd + "." + time + ".csv"));
 
-						String time = timestamp_arr[time_index];
-						String day = timestamp_arr[day_index];
+						String stationNumName = line.substring(4,13).replaceAll("\\s+", "");	
+						String dateInfo = line.substring(line.length()-20,line.length()-5).replaceAll("\\s+","").toUpperCase();
+						
+						String hourNumber = dateInfo.substring(0,3);
+						String dayNumber = dateInfo.substring(3,5);
+						String monNumber = monthToNumberConverter(dateInfo.substring(5,8));
+						
+						System.out.println(dateInfo);
+						
 
-						String jd = Day2julianDay(day, months, years);
-						ind = new PrintWriter(new FileWriter(directory + stations + "." + years + jd + "." + time + ".txt"));
+						ind = new PrintWriter(new FileWriter(directory + stationNumName + "." + years + "." + monNumber + "." + dayNumber +"." + hourNumber + ".csv"));
+						
 					} else if (line.contains("Station information and sounding indices")) {
 						ind.close();
 					}
@@ -124,6 +138,38 @@ public class WyomingDownload {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static String monthToNumberConverter(String month){
+		
+		if(month.equals("JAN")){
+			return "01";
+		}else if (month.equals("FEB")){
+			return "02";
+		}else if (month.equals("MAR")){
+			return "03";
+		}else if (month.equals("APR")){
+			return "04";
+		}else if (month.equals("MAY")){
+			return "05";
+		}else if (month.equals("JUN")){
+			return "06";
+		}else if (month.equals("JUL")){
+			return "07";
+		}else if (month.equals("AUG")){
+			return "08";
+		}else if (month.equals("SEP")){
+			return "09";
+		}else if (month.equals("OCT")){
+			return "10";
+		}else if (month.equals("NOV")){
+			return "11";
+		}else if (month.equals("DEC")){
+			return "12";
+		}else{
+			return "";
+		}
+		
 	}
 
 	public static boolean containsLetter(String s) {

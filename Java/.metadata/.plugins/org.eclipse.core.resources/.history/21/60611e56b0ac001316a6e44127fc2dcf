@@ -8,11 +8,19 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+/* 
+Automated Wyoming Radiosondes Parser - Crae Sosa 
+Selected Stations 
+1. HGHT = 61m - 72694 SLE Salem Observations
+2. HGHT = 790m - 72451 DDC Dodge City(Awos) Observations at 00Z 15 Mar 2014
+3. HGHT = 1625m - 72469 DNR Denver Observations at 00Z 15 Mar 2014
+ */
+
 public class WyomingDownload {
 	static PrintWriter ind;
 	static String directory = "/Users/craesosa/Dropbox/Northrop/WyomingRadiosondes/Java/WyomingSam/wyoming_downloads/";
 	static String linkPREFIX = "http://weather.uwyo.edu/cgi-bin/sounding?";
-	static String region = "region=europe";
+	static String region = "region=naconf";
 	static String typeText = "&TYPE=TEXT%3ALIST";
 	// varied
 	static String yr = "&YEAR=";
@@ -23,23 +31,18 @@ public class WyomingDownload {
 	static String mode = "12hr";
 
 	public static void main(String args[]) {
-		String[] stationNum = { "10868", "06260", "16622", "16245", "8190" };
-		String[] stations = { "10868Muenchen-OberschlssheimObservations",
-				"06260EHDBDeBiltObservations",
-				"16622LGTSThessaloniki(Airport)Observations",
-				"16245LIREPraticaDiMareObservations", "8190Observations" };
+		String[] stationNum = { "72694", "72451", "72469"};
+		String[] stations = { "72694SLESalem","72451DDCDodgeCity","72469DNRDenver"};
 		
 		String[] years = {"2009"};
 		String[] months = { "01" };
 		// Loop over the stations once you have em
 		for (int k = 0; k < stationNum.length; k++) {
-//			System.out.println(k);
 			for (int i = 0; i < years.length; i++) {
 				for (int j = 0; j < months.length; j++) {
 					// Assembling link
 					String linkGen = linkPREFIX + region + typeText + yr + years[i] + mon + months[j] + from + SN + stationNum[k];
 					System.out.println(linkGen);
-
 					wyomingSite(linkGen, years[i], months[j], stationNum[k], stations[k]);
 				}
 			}
@@ -70,18 +73,27 @@ public class WyomingDownload {
 				ind.close();
 			} else if (mode.equals("12hr")) {
 				while ((line = in.readLine()) != null) {
-					if (line.replaceAll(" ", "").contains(stations)) {
+					if (line.replaceAll("\\s+", "").contains(stations)) {
 						String timestamp = line;
-						String[] timestamp_arr = timestamp.split(" ");
-						int ts_len = timestamp_arr.length;
-						int time_index = ts_len - 4;
-						int day_index = ts_len - 3;
+						System.out.println(timestamp);
+//						String[] timestamp_arr = timestamp.split(" ");
+//						int ts_len = timestamp_arr.length;
+//						int time_index = ts_len - 4;
+//						int day_index = ts_len - 3;
+//
+//						String time = timestamp_arr[time_index];
+//						String day = timestamp_arr[day_index];
+//
+//						String jd = Day2julianDay(day, months, years);
+//						ind = new PrintWriter(new FileWriter(directory + stations + "." + years + jd + "." + time + ".csv"));
 
-						String time = timestamp_arr[time_index];
-						String day = timestamp_arr[day_index];
+						String stationNumName = line.substring(4,13).replaceAll("\\s+", "");	
+						String dateInfo = line.substring(line.length()-20,line.length()-5).replaceAll("\\s+","").toUpperCase();
+						
+						
 
-						String jd = Day2julianDay(day, months, years);
-						ind = new PrintWriter(new FileWriter(directory + stations + "." + years + jd + "." + time + ".txt"));
+						ind = new PrintWriter(new FileWriter(directory + stationNumName + "." + dateInfo + ".csv"));
+						
 					} else if (line.contains("Station information and sounding indices")) {
 						ind.close();
 					}
@@ -90,13 +102,30 @@ public class WyomingDownload {
 					if (cL == true | line.contains("--") | line.isEmpty()) {
 						
 					} else {
-						//43 is the length of the substring 
+						//44 is the length of the substring 
+						String lineOriginal = line.substring(0,44);
+						line = lineOriginal.substring(0,7) + "," + 
+							   lineOriginal.substring(7,14) + "," + 
+							   lineOriginal.substring(14,21) + "," + 
+							   lineOriginal.substring(21,28) + "," +
+							   lineOriginal.substring(28,35) + "," + 
+							   lineOriginal.substring(35,lineOriginal.length());
 						
-						String line = line.substring(0,44);
-						String line = line.substring(0, 4) + "," + line.substring(4, line.length());
+//						String checkWhiteSpaces = line.trim();
+						boolean shouldAllowLine = true; 
+						String[] checkLine = line.split(",");
+						for(String bitToCheck:checkLine){
+							if(bitToCheck.trim().length()>0){
 
+							}else{
+								shouldAllowLine = false;
+								break;
+							}
+						}
 						
-						ind.println();
+						if(shouldAllowLine){
+							ind.println(line);
+						}
 					}
 				}
 				in.close();
@@ -104,6 +133,30 @@ public class WyomingDownload {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public String monthToNumberConverter(String month){
+		
+		if(month.equals("JAN")){
+			return "01";
+		}else if (month.equals("FEB")){
+			return "02";
+		}else if (month.equals("MAR")){
+			return "03";
+		}else if (month.equals("APR")){
+			return "04";
+		}else if (month.equals("MAY")){
+			return "05";
+		}else if (month.equals("JUN")){
+			return "06";
+		}else if (month.equals("JUL")){
+			return "07";
+		}else if (month.equals("JUL")){
+			return "07";
+		}else{
+			return "";
+		}
+		
 	}
 
 	public static boolean containsLetter(String s) {
@@ -116,7 +169,6 @@ public class WyomingDownload {
 	}
 
 	public static String Day2julianDay(String DOM, String MON, String YEAR) {
-
 		int intDOM = Integer.parseInt(DOM);
 		int intMON = Integer.parseInt(MON) - 1; // -1 because months start at 0;
 		int intYEAR = Integer.parseInt(YEAR);
