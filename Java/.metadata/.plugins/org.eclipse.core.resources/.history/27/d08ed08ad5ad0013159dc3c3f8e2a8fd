@@ -37,28 +37,31 @@ public class WyomingDownload {
 				for (int j = 0; j < monthsToDownload.length; j++) {
 					// Assembling link
 					String linkGen = wyomingLinkHead + wyomingLinkRegion + wyomingLinkTextType + wyomingLinkYear + yearsToDownload[i] + wyomingLinkMonth + monthsToDownload[j] + wyomingLinkTimespan + wyomingLinkStationName + wyomingStationNumberArray[k];
-					wyomingSite(linkGen, yearsToDownload[i], wyomingStationNumberAbbrevNameArray[k]);
+					System.out.println(linkGen);
+					wyomingSite(linkGen, yearsToDownload[i], monthsToDownload[j], wyomingStationNumberArray[k], wyomingStationNumberAbbrevNameArray[k]);
 				}
 			}
 		}
 	}
 
-	public static void wyomingSite(String wyomingLink, String year, String stations) {
+	public static void wyomingSite(String link, String years, String months,
+			String stationNum, String stations) {
 		try {
 			DefaultHttpClient client = new DefaultHttpClient();
-			HttpGet get = new HttpGet(wyomingLink);
+			HttpGet get = new HttpGet(link);
 			HttpResponse response = client.execute(get);
-			BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
 			String line = "";
 			while ((line = in.readLine()) != null) {
 				if (line.replaceAll("\\s+", "").contains(stations)) {
-					String sondeStationInformation = line.substring(4,13).replaceAll("\\s+", "");	
-					System.out.println(sondeStationInformation);
-					String sondeDateInformation = line.substring(line.length()-20,line.length()-5).replaceAll("\\s+","").toUpperCase();
-					String sondeHour = sondeDateInformation.substring(0,3);
-					String sondeDay = sondeDateInformation.substring(3,5);
-					String sondeMonth = monthToNumberConverter(sondeDateInformation.substring(5,8));
-					printWriter = new PrintWriter(new FileWriter(downloadDirectory + sondeStationInformation + "." + year + "." + sondeMonth + "." + sondeDay +"." + sondeHour + ".csv"));
+					String stationNumName = line.substring(4,13).replaceAll("\\s+", "");	
+					String dateInfo = line.substring(line.length()-20,line.length()-5).replaceAll("\\s+","").toUpperCase();
+					String hourNumber = dateInfo.substring(0,3);
+					String dayNumber = dateInfo.substring(3,5);
+					String monNumber = monthToNumberConverter(dateInfo.substring(5,8));
+					printWriter = new PrintWriter(new FileWriter(downloadDirectory + stationNumName + "." + years + "." + monNumber + "." + dayNumber +"." + hourNumber + ".csv"));
+
 				} else if (line.contains("Station information and sounding indices")) {
 					printWriter.close();
 				}
@@ -66,26 +69,26 @@ public class WyomingDownload {
 				if (containsLetter(line) | line.contains("--") | line.isEmpty()) {
 
 				} else {
-					//Commas 
-					String originalLine = line.substring(0,44);
-					String commasAdded = originalLine.substring(0,7) + "," + 
-							originalLine.substring(7,14) + "," + 
-							originalLine.substring(14,21) + "," + 
-							originalLine.substring(21,28) + "," +
-							originalLine.substring(28,35) + "," + 
-							originalLine.substring(35,originalLine.length());
+					//44 is the length of the substring 
+					String lineOriginal = line.substring(0,44);
+					line = lineOriginal.substring(0,7) + "," + 
+							lineOriginal.substring(7,14) + "," + 
+							lineOriginal.substring(14,21) + "," + 
+							lineOriginal.substring(21,28) + "," +
+							lineOriginal.substring(28,35) + "," + 
+							lineOriginal.substring(35,lineOriginal.length());
 
 					boolean shouldAllowLine = true; 
-					String[] checkLineForEmptySpaces = commasAdded.split(",");
-					for(String entryToCheck:checkLineForEmptySpaces){
-						if(entryToCheck.trim().length()==0){
+					String[] checkLine = line.split(",");
+					for(String bitToCheck:checkLine){
+						if(bitToCheck.trim().length()==0){
 							shouldAllowLine = false;
 							break;
 						}
 					}
 
 					if(shouldAllowLine){
-						printWriter.println(commasAdded);
+						printWriter.println(line);
 					}
 				}
 			}

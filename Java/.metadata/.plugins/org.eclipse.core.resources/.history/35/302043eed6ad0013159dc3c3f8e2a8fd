@@ -37,6 +37,7 @@ public class WyomingDownload {
 				for (int j = 0; j < monthsToDownload.length; j++) {
 					// Assembling link
 					String linkGen = wyomingLinkHead + wyomingLinkRegion + wyomingLinkTextType + wyomingLinkYear + yearsToDownload[i] + wyomingLinkMonth + monthsToDownload[j] + wyomingLinkTimespan + wyomingLinkStationName + wyomingStationNumberArray[k];
+					System.out.println(linkGen);
 					wyomingSite(linkGen, yearsToDownload[i], wyomingStationNumberAbbrevNameArray[k]);
 				}
 			}
@@ -53,7 +54,6 @@ public class WyomingDownload {
 			while ((line = in.readLine()) != null) {
 				if (line.replaceAll("\\s+", "").contains(stations)) {
 					String sondeStationInformation = line.substring(4,13).replaceAll("\\s+", "");	
-					System.out.println(sondeStationInformation);
 					String sondeDateInformation = line.substring(line.length()-20,line.length()-5).replaceAll("\\s+","").toUpperCase();
 					String sondeHour = sondeDateInformation.substring(0,3);
 					String sondeDay = sondeDateInformation.substring(3,5);
@@ -85,7 +85,7 @@ public class WyomingDownload {
 					}
 
 					if(shouldAllowLine){
-						printWriter.println(commasAdded);
+						printWriter.println(line);
 					}
 				}
 			}

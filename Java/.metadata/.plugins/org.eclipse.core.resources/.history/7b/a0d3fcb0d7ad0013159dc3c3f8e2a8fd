@@ -37,6 +37,7 @@ public class WyomingDownload {
 				for (int j = 0; j < monthsToDownload.length; j++) {
 					// Assembling link
 					String linkGen = wyomingLinkHead + wyomingLinkRegion + wyomingLinkTextType + wyomingLinkYear + yearsToDownload[i] + wyomingLinkMonth + monthsToDownload[j] + wyomingLinkTimespan + wyomingLinkStationName + wyomingStationNumberArray[k];
+					System.out.println(linkGen);
 					wyomingSite(linkGen, yearsToDownload[i], wyomingStationNumberAbbrevNameArray[k]);
 				}
 			}
