@@ -29,6 +29,7 @@ public class WyomingDownload {
 	public static void main(String args[]) {
 		String[] stationNum = { "72694", "72451", "72469"};
 		String[] stations = { "72694SLESalem","72451DDCDodgeCity","72469DNRDenver"};
+
 		String[] years = {"2009"};
 		String[] months = { "01" };
 		// Loop over the stations once you have em
@@ -57,16 +58,19 @@ public class WyomingDownload {
 				if (line.replaceAll("\\s+", "").contains(stations)) {
 					String stationNumName = line.substring(4,13).replaceAll("\\s+", "");	
 					String dateInfo = line.substring(line.length()-20,line.length()-5).replaceAll("\\s+","").toUpperCase();
+
 					String hourNumber = dateInfo.substring(0,3);
 					String dayNumber = dateInfo.substring(3,5);
 					String monNumber = monthToNumberConverter(dateInfo.substring(5,8));
+
 					ind = new PrintWriter(new FileWriter(directory + stationNumName + "." + years + "." + monNumber + "." + dayNumber +"." + hourNumber + ".csv"));
 
 				} else if (line.contains("Station information and sounding indices")) {
 					ind.close();
 				}
 
-				if (containsLetter(line) | line.contains("--") | line.isEmpty()) {
+				boolean cL = containsLetter(line);
+				if (cL == true | line.contains("--") | line.isEmpty()) {
 
 				} else {
 					//44 is the length of the substring 

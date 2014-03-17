@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.GregorianCalendar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -14,6 +15,7 @@ Selected Stations
 2. HGHT = 790m - 72451 DDC Dodge City(Awos) Observations at 00Z 15 Mar 2014
 3. HGHT = 1625m - 72469 DNR Denver Observations at 00Z 15 Mar 2014
  */
+
 public class WyomingDownload {
 	static PrintWriter ind;
 	static String directory = "/Users/craesosa/Dropbox/Northrop/WyomingRadiosondes/Java/WyomingSam/wyoming_downloads/";
@@ -29,6 +31,7 @@ public class WyomingDownload {
 	public static void main(String args[]) {
 		String[] stationNum = { "72694", "72451", "72469"};
 		String[] stations = { "72694SLESalem","72451DDCDodgeCity","72469DNRDenver"};
+
 		String[] years = {"2009"};
 		String[] months = { "01" };
 		// Loop over the stations once you have em
@@ -55,18 +58,26 @@ public class WyomingDownload {
 			String line = "";
 			while ((line = in.readLine()) != null) {
 				if (line.replaceAll("\\s+", "").contains(stations)) {
+					String timestamp = line;
+
 					String stationNumName = line.substring(4,13).replaceAll("\\s+", "");	
 					String dateInfo = line.substring(line.length()-20,line.length()-5).replaceAll("\\s+","").toUpperCase();
+
 					String hourNumber = dateInfo.substring(0,3);
 					String dayNumber = dateInfo.substring(3,5);
 					String monNumber = monthToNumberConverter(dateInfo.substring(5,8));
+
+					System.out.println(dateInfo);
+
+
 					ind = new PrintWriter(new FileWriter(directory + stationNumName + "." + years + "." + monNumber + "." + dayNumber +"." + hourNumber + ".csv"));
 
 				} else if (line.contains("Station information and sounding indices")) {
 					ind.close();
 				}
 
-				if (containsLetter(line) | line.contains("--") | line.isEmpty()) {
+				boolean cL = containsLetter(line);
+				if (cL == true | line.contains("--") | line.isEmpty()) {
 
 				} else {
 					//44 is the length of the substring 
@@ -78,10 +89,13 @@ public class WyomingDownload {
 							lineOriginal.substring(28,35) + "," + 
 							lineOriginal.substring(35,lineOriginal.length());
 
+					//						String checkWhiteSpaces = line.trim();
 					boolean shouldAllowLine = true; 
 					String[] checkLine = line.split(",");
 					for(String bitToCheck:checkLine){
-						if(bitToCheck.trim().length()==0){
+						if(bitToCheck.trim().length()>0){
+
+						}else{
 							shouldAllowLine = false;
 							break;
 						}
@@ -100,6 +114,7 @@ public class WyomingDownload {
 	}
 
 	public static String monthToNumberConverter(String month){
+
 		if(month.equals("JAN")){
 			return "01";
 		}else if (month.equals("FEB")){
@@ -139,4 +154,17 @@ public class WyomingDownload {
 		return letterFound;
 	}
 
+	public static String Day2julianDay(String DOM, String MON, String YEAR) {
+		int intDOM = Integer.parseInt(DOM);
+		int intMON = Integer.parseInt(MON) - 1; // -1 because months start at 0;
+		int intYEAR = Integer.parseInt(YEAR);
+
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.set(GregorianCalendar.DAY_OF_MONTH, intDOM);
+		gc.set(GregorianCalendar.MONTH, intMON);
+		gc.set(GregorianCalendar.YEAR, intYEAR);
+		int intDOY = gc.get(GregorianCalendar.DAY_OF_YEAR);
+
+		return String.format("%03d", intDOY);
+	}
 }

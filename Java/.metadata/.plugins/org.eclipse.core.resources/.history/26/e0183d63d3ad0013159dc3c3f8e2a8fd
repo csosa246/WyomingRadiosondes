@@ -29,6 +29,7 @@ public class WyomingDownload {
 	public static void main(String args[]) {
 		String[] stationNum = { "72694", "72451", "72469"};
 		String[] stations = { "72694SLESalem","72451DDCDodgeCity","72469DNRDenver"};
+
 		String[] years = {"2009"};
 		String[] months = { "01" };
 		// Loop over the stations once you have em
